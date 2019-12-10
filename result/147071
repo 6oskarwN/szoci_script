@@ -1,0 +1,49 @@
+=================================
+etz janos
+  Köszi a segítséged. Onnan tudom hogy a kondít kiüti hogy nincs szikra ha kicserélem egy újra akkor van.
+147071
+
+147071
+ Keri
+   Eredeti trafó van rajta? Vagy legalább is hozzá való?
+ Mert ez a kondi 250V-ra van méretezve. Egy nagyobb trafó, esetleg túl nagy zárásszög tud nagyobb feszültséget okozni.
+ Illetve ami valószínû hogy nagyon durván silányok a kondenzátorok és zárlatos lesz.
+ Van multimétered? Zárlatot mérj egy rossz kondin. Ha zárlatos akkor rossz.
+ 
+ Ha van kedved buherálni, akkor javaslom ne a gyári kondit használd.
+ Az lényegében alufólia papír szigetelõvel feltekerve. A létezõ legprimitívebb megoldás.
+ 
+ Ez a kondi magasabb feszültséget bír, és önjavító, tehát ha át is üt, nem hibásodik meg, nem utolsó sorban valószínûleg olcsóbb is.
+ 
+ https://lomex.hu/hu/webshop/#/search,07-11-04/stype,1
+ 
+ Annyi hogy rögzítsd valahogy a kondi testet és ráforrasztott dróttal vezesd oda ahova kell (megszakító két pólusára amibõl az egyik a test), mert ha csak kivezetést befogatod, a rezgéstõl le fog törni. Illetve próbáld úgy elhelyezni hogy túl meleg se érje. Ott a megszakító környéke tökéletes hely.
+ 
+ 147072
+ 
+ 147072
+  etz janos
+    3 kivezetéses fesszabályzot hogy kell bekötni aminek  31, 15, 67 pontjai vannak. gyári etz fesszabályzonak 5 van test, df, 61, d+, 51. segítségeteket elõre is köszi
+  147076
+  
+  147076
+   Atilla
+     Nem kell az a túl sok láb! :-)
+   
+   A 31 a test, a 15-ös az elvileg gyújtás, de ne erre használd, hanem a segéddiódákról jövõ szálat dugd rá. (D+), A 67 pedig a generátorra menõ gerjesztõ szál. (DF). 
+   
+   Ez eddig egyszerû, bár innen sem túl bonyolult:
+   Az 51-61 szál összeköthetõ. Vagyis kár összekötni, mert csak egy plusz hibalehetõség. A jó megoldás, hogy a diódákról jövõ szál (61) rögtön mehet a biztosítéktáblára összekötve az akkumulátor + sarkával. Magyarul oda kell dugni a 61-est ahová az 51-es vezeték túlvége volt kötve. Az 51-es vezeték meg mehet a kukába. És így megspórolsz egy vezeték összekötést.
+   Hát ennyi! :-)
+   147077
+   
+   147077
+    etz janos
+      Köszi a segítséget!
+    147078
+    
+  147072
+  etz janos
+    Köszi a segítséget. trafó csere megoldotta a problémát valoszinü zárlatos volt.
+  147075
+  

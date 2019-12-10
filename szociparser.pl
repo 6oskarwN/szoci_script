@@ -32,32 +32,32 @@ use warnings;
 
 my $callFILE;	 #read-file
 my $threadFILE;  #read-in thread file
-my $wFILE;		 #write thread file
+my $wFILE;	 #write thread file
 
-my @slurpstr;  #string used for slurp
+my @slurpstr;    #string used for slurp
 my @childslurp;
 
-my @FILES;              #list of files in directory
-my $filename;			#nume fisier, string
+my @FILES;       #list of files in directory
+my $filename;	 #filename, string
 
-my %hash = ();			#hash cu legatura referinta > fisier
-my $child;              #iterator prin array-ul de valoare
+my %hash = ();	 #hash that keeps the reference > file
+my $child;       #iterator though the value array
 
 my $fline;
 
 my @splitter;
 
 my $nickname;
-my $textbody="";       #variabila ce tine blabla-ul
-my $record;			   #actual record-ID
-my $reference;		   #reference to older record-ID (father?)
+my $textbody="";       #variable that stores the blabla
+my $record;	       #actual record-ID
+my $reference;	       #reference to older record-ID (father?)
 my $counter;           #counter: 0-no record active 1-nick expected 2-textbody expected 3-record ID expected 4-reference of father that can be void or real
 
 
 #my $k;
 #my $v;
 
-opendir(DIR, "source"); #source e calea sursa
+opendir(DIR, "source"); #source e is the path of source htmls, downloaded
 @FILES= readdir(DIR); 
 
 foreach $filename(@FILES)
@@ -68,17 +68,17 @@ if($filename =~ /.htm/)
 
 ####read in record by record(line by line)
 
-@splitter=split(/.htm/,$filename);	#obtinem in $splitter[0] numele fara extensie, daca e nevoie
-print "$splitter[0] \n";			#debug, see name of ingested file
+@splitter=split(/.htm/,$filename);	#$splitter[0] stores name without extension, if needed
+print "$splitter[0] \n";		#debug, see name of ingested file
 
-open (callFILE,"<" ,  "source\\$filename"); #source e calea sursa
-seek(callFILE,0,0);                        #goto beginning
+open (callFILE,"<","source\/$filename");#source e is the path of source htmls, downloaded
+seek(callFILE,0,0);                     #goto beginning
 $counter=0;
-while($fline=<callFILE>)                   #cat timp nu ai ajuns la sfastitul HTML-ului, il parsezi
+while($fline=<callFILE>)                #while not at the end of HTML, parse it.
 {
 chomp($fline);
 
-#daca incepe un nou record
+#Forum-specific string encountered at the beginning of new record
 if($fline =~ /^  \<div class\=\"forumhozzaszolasfejlec\"\>/) 
 { 
 	$counter=1;
@@ -86,7 +86,7 @@ if($fline =~ /^  \<div class\=\"forumhozzaszolasfejlec\"\>/)
 }
 
 
-#gasim nick-ul
+#finding nickname, again a forum-specific string
 if(($counter eq 1) and ($fline =~ /^   \<span class\=\"forumhozzaszolasnick\"\>/))
 {
 	$nickname="NOBODY";
@@ -100,7 +100,7 @@ if (defined $splitter[0])
 
 }
 
-#gasim textbody start
+#finding textbody start
 if(($counter eq 2) and ($fline =~ /^  \<div class\=\"forumhozzaszolasszoveg\"\>/))
 {
   $textbody="";
@@ -131,7 +131,7 @@ if ($fline =~ /\<\/div\>/)
 
 
 
-#gasim actual record ID
+#find actual record ID
 if(($counter eq 3) and ($fline =~ /^   \<div class\=\"forumsorszam\"\>/) )
 {
 	$counter=4;
@@ -142,7 +142,7 @@ if(($counter eq 3) and ($fline =~ /^   \<div class\=\"forumsorszam\"\>/) )
 #print "record found: $record \n"; #debug
 }
 
-#gasim father ID
+#father ID to be found next
 if(($counter eq 4) and ($fline =~ /^   \<div class\=\"forumreferrer\"\>/))
 {
   $reference = "null";
@@ -163,51 +163,48 @@ elsif ($fline =~ /\<\/div\>/)          #end of record will be detected
    {	
 #   	print "EOrecord, father ID is: $reference \n\n"; #debug
      $counter=0;  
-     #aici se termina, end of record detected,
+     #here it ends, end of record detected,
 ####################################################################
-# aici se face treaba upside-down
+# here the upside-down job follows
 ### print test results, the record:
 #print "recID: $record\n";
 #print "Nick: $nickname\n";
 #print "textbody $textbody\n";
 #print "father: $reference\n\n";
 
-@slurpstr = (); #initializam la empty, se va umple cu continut de fisier, daca se gaseste thread, daca nu, ramane empty.
-
+@slurpstr = (); #empty, will fill with content if there are discussions.
 
 ### if reference exists in hash, it means that child thread file(s) already exists, we slurp it(them) in a single array and delete their respective file(s)
 
-if (defined $hash { $record }) #hash(record)[] contine lista child-urilor pentru $record
+if (defined $hash { $record })             #hash(record)[] contains childs list for a $record
  {
  	print "all children of $record: are: "; #debug
  	for $child ( 0 .. $#{ $hash{$record} } )
  	   {
       @childslurp =();
 	   print "$hash{$record}[$child]"; #debug
-      open (threadFILE,"<" ,  "result\\$hash{$record}[$child]") or die "Couldn't open file: $!"; #deschidem read-only
+      open (threadFILE,"<" ,  "result\/$hash{$record}[$child]") or die "Couldn't open file: $!"; #open read-only
       @childslurp=<threadFILE>;
      # print "."; #debug?
       close (threadFILE);
-#stergem fisierul copil-record, fiindca a fost inglobat     
+#deleting child-record file because it was incorporated    
 	 my $tfname=$hash{$record}[$child];
-     	 system("del", "result\\$tfname"); #sterge fisierul original(rm in linux)
+     	 system("rm", "result\/$tfname"); #linux variant
+#     	 system("del", "result\\$tfname"); #Windows variant
       print ", "; #debug
 
 		 #stergem si copilul din rolul de father din hash
-#print "forget $hash{$record}[$child]\n";
-#stergem apoil copilul din rolul de copil	 
-#	 pop @{$hash{$record}},$hash{$record}[$child];  #stergem apoil copilul din rolul de copil	 - linie de cod defecta
  
-      @slurpstr = (@slurpstr,@childslurp);  #se concateneaza la slurpstr continutul fisierului unui child
+      @slurpstr = (@slurpstr,@childslurp);  #concat to slurpstr the contect of a child file
     }
   print "\n";
   }
 
-### Avem un nou record, cu ce trebuie in el, si-l salvam ca fisier independent
+### We have a recording with everything inside, saving it as independent file
 
 {
 #	print "threadfile $record established \n"; #debug
-  open(threadFILE,">" ,  "result\\$record") or die "Couldn't open write file: $!"; #deschidem write
+  open(threadFILE,">" ,  "result\/$record") or die "Couldn't open write file: $!"; #deschidem write
   seek(threadFILE,0,0); 
 if ($reference eq "null") {
   print threadFILE "=================================\n";
@@ -219,7 +216,7 @@ if ($reference eq "null") {
   print threadFILE "$textbody\n"; 
   print threadFILE "$record\n";
   print threadFILE "\n"; 	
-  print threadFILE "@slurpstr";   #adaugam la sfarsitul fisierului cu recordul, si continutul child-record-urilor
+  print threadFILE "@slurpstr";   #add child records at the end of record
   close (threadFILE);
 }
 
@@ -236,9 +233,6 @@ if ($reference ne "null")   #there is a father for current $record
 
    } #.end of a record detected, all stuff with the record done
 } #. end of if ($counter eq 51), means end of record content detection
-
-
-
 
 
 
