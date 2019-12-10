@@ -1,36 +1,47 @@
 #!/usr/bin/perl
 
 
-#szocimotoros topic parser v1.2
+#szocimotoros topic parser v1.3
+#Made in Romania by "FraMZ" @ https://www.tapatalk.com/groups/mzbrothersfr/
+#
+#Use-case(what problem is solved?): As a Kindle user, I would like to obtain 
+#and load offline a nicely formatted text file to read the discussions 
+#of that forum, but grouped on topics(raised problem plus connected replies),
+#not in a chain-mail manner as is native on the forum. 
+#
+#usage: go to http://szocimotoros.hu and download individual pages from a forum, 
+#e.g. first 5 pages from  MZ (http://szocimotoros.hu/hu/forumok/topic/10) 
+#save them directly in /source directory (create this directory first)
+#have /result directory also created
+#run the script using perl. 
+#In the /result each topic will be saved as a file.
+#for Kindle, the files can be concatenate
+#Win cmd: copy * newfile.txt
+#Linux cat * > newfile.txt
 
-#usage: go to szocimotoros and download html page only
-#put it in /source
-#run the script
+# $ perl szociparser_v1_3.pl
 
+#Script located in the parent of /source and /result (see below)
+#each discussion will result in a separate file in the /result directory. You can manipulate them further.
+#I concat them into unique file then read it from Kindle
 
-#IN WORK: Change Request: assemble the output into single page
-#SOLVED Change Request: <br>, <br \> to be replaced by \n in result text.
-#SOLVED printf bug
-#not done: Must put some tabs in front of it to keep indenting
-
-#SOLVED fault: &percent;  to be replaced by % in result text.
-#Change request: sa produca outputul direct in fisier.txt
+#Next version: Must put some tabs in front of it to keep indenting
 
 use strict;
 use warnings;
 
-my $callFILE;			#read-file
+my $callFILE;	 #read-file
 my $threadFILE;  #read-in thread file
-my $wFILE;			#write thread file
+my $wFILE;		 #write thread file
 
 my @slurpstr;  #string used for slurp
 my @childslurp;
 
-my @FILES;                      #list of files in directory
+my @FILES;              #list of files in directory
 my $filename;			#nume fisier, string
 
 my %hash = ();			#hash cu legatura referinta > fisier
-my $child;          #iterator prin array-ul de valoare
+my $child;              #iterator prin array-ul de valoare
 
 my $fline;
 
@@ -38,9 +49,9 @@ my @splitter;
 
 my $nickname;
 my $textbody="";       #variabila ce tine blabla-ul
-my $record;			#actual record-ID
-my $reference;			#reference to older record-ID (father?)
-my $counter;                    #counter: 0-no record active 1-nick expected 2-textbody expected 3-record ID expected 4-reference of father that can be void or real
+my $record;			   #actual record-ID
+my $reference;		   #reference to older record-ID (father?)
+my $counter;           #counter: 0-no record active 1-nick expected 2-textbody expected 3-record ID expected 4-reference of father that can be void or real
 
 
 #my $k;
