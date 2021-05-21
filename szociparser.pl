@@ -29,6 +29,7 @@
 
 use strict;
 use warnings;
+use Encode;
 
 my $callFILE;	 #read-file
 my $threadFILE;  #read-in thread file
@@ -71,12 +72,13 @@ if($filename =~ /.htm/)
 @splitter=split(/.htm/,$filename);	#$splitter[0] stores name without extension, if needed
 print "$splitter[0] \n";		#debug, see name of ingested file
 
-open (callFILE,"<","source\/$filename");#source e is the path of source htmls, downloaded
+open (callFILE,"<:encoding(ISO-8859-2)","source\/$filename");#source e is the path of source htmls, downloaded
 seek(callFILE,0,0);                     #goto beginning
 $counter=0;
 while($fline=<callFILE>)                #while not at the end of HTML, parse it.
 {
 chomp($fline);
+$fline = encode('UTF-8', $fline);
 
 #Forum-specific string encountered at the beginning of new record
 if($fline =~ /^  \<div class\=\"forumhozzaszolasfejlec\"\>/) 
@@ -204,7 +206,7 @@ if (defined $hash { $record })             #hash(record)[] contains childs list 
 
 {
 #	print "threadfile $record established \n"; #debug
-  open(threadFILE,">" ,  "result\/$record") or die "Couldn't open write file: $!"; #deschidem write
+  open (threadFILE,">" ,  "result\/$record") or die "Couldn't open write file: $!"; #deschidem write
   seek(threadFILE,0,0); 
 if ($reference eq "null") {
   print threadFILE "=================================\n";
